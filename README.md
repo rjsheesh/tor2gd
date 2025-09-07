@@ -15,4 +15,5 @@ Automatically installs Python 3.10 in Google Colab, sets up a custom folder for 
 2. `all files upload on Google Drive`
 3. Run the script:
 4. `Open tor2gd.ipynb` File
-`!python /content/drive/MyDrive/Torrents/tor2col_setup.py`
+5. Run `!python /content/drive/MyDrive/Torrents/tor2col_setup.py`
+
