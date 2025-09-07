@@ -1,23 +1,30 @@
-# ============================================================
-# ⚡ One-Click Colab Torrent Downloader (Multithreaded)
-# Developed by RJ Sheesh 😎
-# ============================================================
+# =============================
+# Google Colab Torrent Downloader
+# Optimized + Multithreaded + Speed Boosted
+# =============================
 
-import libtorrent as lt
+import os
 import time
+import datetime
+import threading
 from tqdm import tqdm
 from colorama import Fore, Style
-from IPython.display import HTML, display
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import os
+import libtorrent as lt
 
-# --- Step 1: Setup Torrent Session ---
+# ---- Default Save Path ----
+SAVE_PATH = "/content/drive/My Drive/Torrents"
+os.makedirs(SAVE_PATH, exist_ok=True)
+
+
+# ---- Start Session ----
 def start_session():
     ses = lt.session()
     ses.listen_on(6881, 6891)
     ses.start_dht()
     return ses
 
+
+# ---- Add Torrent / Magnet ----
 def add_torrent(ses, link_or_path, save_path):
     params = {
         'save_path': save_path,
@@ -30,19 +37,22 @@ def add_torrent(ses, link_or_path, save_path):
         handle = ses.add_torrent({'ti': info, 'save_path': save_path})
     return handle
 
+
+# ---- ETA Formatter ----
 def format_eta(seconds):
     mins, secs = divmod(int(seconds), 60)
     return f"{mins:02d}:{secs:02d}"
 
-# --- Step 2: Download Worker (per torrent) ---
-def download_worker(handle, pbar):
-    while not handle.has_metadata():
-        time.sleep(1)
 
-    while not handle.status().is_seeding:
+# ---- Download Worker ----
+def download_worker(handle, pbar):
+    while not handle.is_seed():
         status = handle.status()
+
+        # Update progress bar
         pbar.update(status.total_done - pbar.n)
 
+        # Live stats
         download_speed = status.download_rate / 1024
         upload_speed = status.upload_rate / 1024
         seeders = status.num_seeds
@@ -60,50 +70,50 @@ def download_worker(handle, pbar):
 
         time.sleep(1)
 
+    # Completed
+    print(Fore.GREEN + f"\n[✔] {handle.name()} COMPLETED!" + Style.RESET_ALL)
     pbar.close()
-    return handle.name()
 
-# --- Step 3: Main Downloader Function ---
-def torrent_downloader():
+
+# ---- Main Download Function ----
+def download_torrents():
     ses = start_session()
-    save_path = "/content/drive/My Drive/Torrents"
-    os.makedirs(save_path, exist_ok=True)
-
-    print(Fore.YELLOW + "\n[+] Enter Magnet Links or Torrent File Paths (comma separated)" + Style.RESET_ALL)
-    links = input("➡️  ").split(",")
+    links = input(Fore.CYAN + "Enter Magnet Links or Torrent Paths (comma separated): " + Style.RESET_ALL).split(",")
 
     handles = []
     for link in links:
         link = link.strip()
         if not link:
             continue
-        print(Fore.CYAN + f"[*] Adding torrent: {link}" + Style.RESET_ALL)
-        handle = add_torrent(ses, link, save_path)
+        print(Fore.YELLOW + f"[*] Adding torrent: {link}" + Style.RESET_ALL)
+        handle = add_torrent(ses, link, SAVE_PATH)
         handles.append(handle)
 
-    # Create progress bars for all torrents
-    progress_bars = {
-        handle: tqdm(
+    print(Fore.MAGENTA + "\n[*] Fetching metadata...\n" + Style.RESET_ALL)
+    for handle in handles:
+        while not handle.has_metadata():
+            time.sleep(1)
+        print(Fore.GREEN + f"[+] Metadata fetched for: {handle.name()}" + Style.RESET_ALL)
+
+    print(Fore.CYAN + "\n[*] Starting Downloads...\n" + Style.RESET_ALL)
+    threads = []
+    for handle in handles:
+        pbar = tqdm(
             total=handle.get_torrent_info().total_size(),
             unit="B", unit_scale=True, unit_divisor=1024,
             desc=handle.name()[:25]
-        ) for handle in handles
-    }
+        )
+        t = threading.Thread(target=download_worker, args=(handle, pbar))
+        t.start()
+        threads.append(t)
 
-    # --- Step 4: Use ThreadPoolExecutor ---
-    completed = []
-    with ThreadPoolExecutor(max_workers=min(5, len(handles))) as executor:
-        futures = [executor.submit(download_worker, handle, progress_bars[handle]) for handle in handles]
-        for future in as_completed(futures):
-            name = future.result()
-            print(Fore.GREEN + f"\n[✔] {name} COMPLETED!" + Style.RESET_ALL)
-            completed.append(name)
+    # Wait for all downloads to finish
+    for t in threads:
+        t.join()
 
-    # Final success message with clickable path
-    display(HTML(f"""
-        <h3 style="color:green;">✅ All torrents downloaded successfully!</h3>
-        <p>📂 Saved at: <a href="file://{save_path}" target="_blank" style="color:blue;">{save_path}</a></p>
-    """))
+    print(Fore.MAGENTA + "\n[+] All torrents downloaded successfully!" + Style.RESET_ALL)
+    print(Fore.YELLOW + f"Saved at: {SAVE_PATH}" + Style.RESET_ALL)
 
-# --- Step 5: Run Downloader ---
-torrent_downloader()
+
+# ---- Run ----
+download_torrents()
