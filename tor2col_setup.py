@@ -7,8 +7,7 @@ import os
 from google.colab import drive
 
 print("🔄 Step 1: Updating and installing dependencies...")
-!apt update -y && apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev \
-libssl-dev libreadline-dev libffi-dev wget -y
+!apt update -y && apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget -y
 
 print("🔄 Step 2: Mounting Google Drive...")
 drive.mount('/content/drive')
@@ -61,3 +60,4 @@ print("📦 Step 7: Installing required Python packages...")
 
 print("✅ Step 8: Setup Completed Successfully!")
 %cd $TORRENTS_DIR
+
