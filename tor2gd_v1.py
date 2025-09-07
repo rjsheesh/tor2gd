@@ -2,9 +2,6 @@
 # ⚡ One-Click Colab Torrent Downloader (Multithreaded)
 # Developed by RJ Sheesh 😎
 # ============================================================
-# --- Mount Google Drive ---
-from google.colab import drive
-drive.mount('/content/drive')
 
 import libtorrent as lt
 import time
