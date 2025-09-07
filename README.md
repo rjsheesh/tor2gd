@@ -11,9 +11,9 @@ Automatically installs Python 3.10 in Google Colab, sets up a custom folder for 
 
 ## Usage
 
-1. Open Google Drive
-2. Clone repo (optional) or copy `colab_py310_installer.py` cell
+1. `Open Google Drive`
+2. `all files upload on Google Drive`
 3. Run the script:
-```python
-from installer.colab_py310_installer import run_installer
-run_installer()
+4. `Open tor2gd.ipynb` And Just Ran
+5. # Step 1: Update & install dependencies first time
+`!python /content/drive/MyDrive/Torrents/tor2col_setup.py`
