@@ -24,5 +24,5 @@ Automatically installs Google Colab, sets up a custom folder for Torrents, and i
 3. `upload all files`
 4. Run the script:
 5. `Open tor2gd.ipynb` File
-6. Open File `tor2gd.ipynb`
+6. `tor2gd.ipynb` Open with > Google Colaboratory 
 
