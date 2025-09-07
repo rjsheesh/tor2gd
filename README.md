@@ -8,7 +8,7 @@
 
 # Google Colab Torrent Uploader Fixed! 🚀
 
-Automatically installs Python 3.10 in Google Colab, sets up a custom folder for Torrents, and installs required Python packages.
+Automatically installs Google Colab, sets up a custom folder for Torrents, and installs required Python packages.
 
 ## Features
 - Auto installs Python 3.10 from source
