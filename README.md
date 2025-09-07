@@ -6,7 +6,7 @@
 - ✅ ফাইল সেভ হওয়ার পর ডিরেক্ট লিঙ্কও দেখাবে
 - ✅ কোড Colab, Windows, Linux – তিনটার জন্যই কাজ করবে
 
-# Google Colab Python 3.10 Auto Installer 🚀
+# Google Colab Torrent Uploader Fixed! 🚀
 
 Automatically installs Python 3.10 in Google Colab, sets up a custom folder for Torrents, and installs required Python packages.
 
